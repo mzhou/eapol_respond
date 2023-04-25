@@ -162,7 +162,7 @@ fn main() -> Result<()> {
                 0x04, // type
                 0x10, // eap-md5 value-size
                 v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], // eap-md5 value 0..8
-                v[8], v[9], v[10], v[11], v[12], v[13], v[14], v[15], // eap-md5 value 0..8
+                v[8], v[9], v[10], v[11], v[12], v[13], v[14], v[15], // eap-md5 value 8..16
             ];
             eprintln!("response md5-challenge eap {}", encode(&response));
             sendto(fd, &response, &addr, MsgFlags::empty())
