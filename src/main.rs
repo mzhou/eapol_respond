@@ -156,7 +156,10 @@ fn main() -> Result<()> {
                 0x00, // type
                 0x00, 0x16, // length
                 // eap
-                0x04, // code
+                0x02, // code
+                id,   // id
+                0x00, 0x16, // length
+                0x04, // type
                 0x10, // eap-md5 value-size
                 v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], // eap-md5 value 0..8
                 v[8], v[9], v[10], v[11], v[12], v[13], v[14], v[15], // eap-md5 value 0..8
@@ -164,6 +167,16 @@ fn main() -> Result<()> {
             eprintln!("response md5-challenge eap {}", encode(&response));
             sendto(fd, &response, &addr, MsgFlags::empty())
                 .context("sendto failed for response md5-challenge eap")?;
+        }
+        // success
+        if len >= 8 && buf[..5] == [0x01, 0x00, 0x00, 0x04, 0x03] && buf[6..8] == [0x00, 0x04] {
+            let id = buf[5];
+            eprintln!("recvfrom success id {}", id);
+        }
+        // failure
+        if len >= 6 && buf[..2] == [0x01, 0x00] && buf[4] == 0x04 {
+            let id = buf[5];
+            eprintln!("recvfrom failure id {}", id);
         }
     }
 }
